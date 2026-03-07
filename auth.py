@@ -26,15 +26,17 @@ class MemoryTransactionStore:
     async def delete(self, key, options=None):
         self._data.pop(key, None)
 
-auth0 = ServerClient(
-    domain=os.getenv('AUTH0_DOMAIN'),
-    client_id=os.getenv('AUTH0_CLIENT_ID'),
-    client_secret=os.getenv('AUTH0_CLIENT_SECRET'),
-    secret=os.getenv('AUTH0_SECRET'),
-    redirect_uri=os.getenv('AUTH0_REDIRECT_URI'),
-    state_store=MemoryStateStore(),
-    transaction_store=MemoryTransactionStore(),
-    authorization_params={
-        'scope': 'openid profile email',
-    }
-)
+state_store = MemoryStateStore()
+transaction_store = MemoryTransactionStore()
+
+def make_auth0():
+    return ServerClient(
+        domain=os.getenv('AUTH0_DOMAIN'),
+        client_id=os.getenv('AUTH0_CLIENT_ID'),
+        client_secret=os.getenv('AUTH0_CLIENT_SECRET'),
+        secret=os.getenv('AUTH0_SECRET'),
+        redirect_uri=os.getenv('AUTH0_REDIRECT_URI'),
+        state_store=state_store,
+        transaction_store=transaction_store,
+        authorization_params={'scope': 'openid profile email'}
+    )
