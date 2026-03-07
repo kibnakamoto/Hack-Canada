@@ -85,7 +85,7 @@ export default function Navbar({ setIsCartOpen }) {
 
         {/* Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <button className="btn-icon">
+          <button className="btn-icon" onClick={() => window.location.href = '/shops'}>
             <Search size={20} />
           </button>
           {user ? (

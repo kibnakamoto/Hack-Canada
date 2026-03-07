@@ -67,10 +67,12 @@ async def user_profile():
             users[user_id]["storeName"] = data.get("storeName")
         if "logoUrl" in data:
             users[user_id]["logoUrl"] = data.get("logoUrl")
+        if "city" in data:
+            users[user_id]["city"] = data.get("city")
         save_users(users)
         return jsonify(users[user_id])
 
-    return jsonify(users.get(user_id, {"storeName": None, "logoUrl": None}))
+    return jsonify(users.get(user_id, {"storeName": None, "logoUrl": None, "city": None}))
 
 @app.route("/api/shops")
 async def get_shops():
@@ -81,9 +83,24 @@ async def get_shops():
             shops.append({
                 "vendorId": user_id,
                 "storeName": profile.get("storeName"),
-                "logoUrl": profile.get("logoUrl")
+                "logoUrl": profile.get("logoUrl"),
+                "city": profile.get("city")
             })
     return jsonify(shops)
+
+@app.route("/api/shops/<vendor_id>")
+async def get_shop_profile(vendor_id):
+    users = load_users()
+    if vendor_id not in users:
+        return jsonify({"error": "Shop not found"}), 404
+    
+    profile = users[vendor_id]
+    return jsonify({
+        "vendorId": vendor_id,
+        "storeName": profile.get("storeName"),
+        "logoUrl": profile.get("logoUrl"),
+        "city": profile.get("city")
+    })
 
 # --- Product API ---
 
@@ -107,11 +124,16 @@ def get_products():
     # Enrich products with custom store names and logos
     for product in products:
         vendor_id = product.get('vendorId')
-        if vendor_id in users:
+        if vendor_id and vendor_id in users:
             if users[vendor_id].get('storeName'):
                 product['vendorName'] = users[vendor_id]['storeName']
             if users[vendor_id].get('logoUrl'):
                 product['vendorLogo'] = users[vendor_id]['logoUrl']
+
+    # Filter by vendor if requested
+    vendor_id_filter = request.args.get('vendorId')
+    if vendor_id_filter:
+        products = [p for p in products if p.get('vendorId') == vendor_id_filter]
             
     return jsonify(products)
 

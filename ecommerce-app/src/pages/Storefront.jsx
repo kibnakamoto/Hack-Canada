@@ -7,6 +7,7 @@ export default function Storefront() {
   const [isAdding, setIsAdding] = useState(false);
   const [storeName, setStoreName] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
+  const [city, setCity] = useState('');
   const [isEditingName, setIsEditingName] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -44,6 +45,7 @@ export default function Storefront() {
       .then(data => {
         if (data.storeName) setStoreName(data.storeName);
         if (data.logoUrl) setLogoUrl(data.logoUrl);
+        if (data.city) setCity(data.city);
       });
   };
 
@@ -52,7 +54,7 @@ export default function Storefront() {
     fetch('/api/user/profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ storeName, logoUrl })
+      body: JSON.stringify({ storeName, logoUrl, city })
     })
     .then(res => res.json())
     .then(() => setIsEditingName(false));
@@ -126,16 +128,31 @@ export default function Storefront() {
               </button>
               
               {isEditingName ? (
-                <form onSubmit={handleUpdateStoreName} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <input 
-                    className="input" 
-                    value={storeName}
-                    onChange={e => setStoreName(e.target.value)}
-                    placeholder="Enter Store Name"
-                    style={{ fontSize: '1.5rem', fontWeight: 700, padding: '0.5rem 1rem' }}
-                  />
-                  <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }}>Save</button>
-                  <button type="button" className="btn btn-secondary" onClick={() => setIsEditingName(false)}>Cancel</button>
+                <form onSubmit={handleUpdateStoreName} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--color-border-light)', maxWidth: '400px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', fontWeight: 500 }}>Store Name</label>
+                    <input 
+                      className="input" 
+                      value={storeName}
+                      onChange={e => setStoreName(e.target.value)}
+                      placeholder="Enter Store Name"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', fontWeight: 500 }}>City</label>
+                    <input 
+                      className="input" 
+                      value={city}
+                      onChange={e => setCity(e.target.value)}
+                      placeholder="e.g. Toronto, ON"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Save Changes</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => setIsEditingName(false)}>Cancel</button>
+                  </div>
                 </form>
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
@@ -163,6 +180,11 @@ export default function Storefront() {
                         Edit Profile
                       </button>
                     </div>
+                    {city && (
+                      <p style={{ color: 'var(--color-primary)', fontSize: '1rem', fontWeight: 600, margin: '0.25rem 0 0 0' }}>
+                        📍 {city}
+                      </p>
+                    )}
                     <p style={{ color: 'var(--color-text-muted-light)', fontSize: '1.1rem', marginTop: '0.5rem', marginBottom: 0 }}>Manage your local listings and grow your business.</p>
                   </div>
                 </div>

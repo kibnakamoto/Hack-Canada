@@ -6,6 +6,7 @@ import Cart from './components/Cart';
 import Home from './pages/Home';
 import Storefront from './pages/Storefront';
 import Shops from './pages/Shops';
+import ShopView from './pages/ShopView';
 import './index.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/storefront" element={<Storefront />} />
               <Route path="/shops" element={<Shops />} />
+              <Route path="/shop/:vendorId" element={<ShopView />} />
             </Routes>
           </main>
           
