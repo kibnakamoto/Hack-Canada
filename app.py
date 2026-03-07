@@ -16,17 +16,19 @@ def login():
 @app.route("/callback")
 def callback():
     run_async(auth0.complete_interactive_login(request.url))
-    return redirect("/profile")
+    return redirect("http://localhost:5173/")
 
 @app.route("/logout")
 def logout():
-    return redirect(run_async(auth0.logout()))
+    from auth0_server_python.auth_types import LogoutOptions
+    options = LogoutOptions(return_to="http://localhost:5173/")
+    return redirect(run_async(auth0.logout(options)))
 
 @app.route("/profile")
 def profile():
     session = run_async(auth0.get_session())
     if not session:
-        return redirect("/login")
+        return jsonify({"error": "Unauthorized"}), 401
     return jsonify(session['user'])
 
 @app.route("/")
@@ -34,4 +36,4 @@ def home():
     return '<a href="/login">Login with Auth0</a>'
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, host="localhost")
