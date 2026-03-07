@@ -32,7 +32,6 @@ export default function Shops() {
     <div className="animate-fade-in" style={{ padding: '4rem 2rem' }}>
       <div className="container">
         <header style={{ marginBottom: '4rem', textAlign: 'center' }}>
-          <div className="badge badge-primary" style={{ marginBottom: '1rem' }}>Directory</div>
           <h1 style={{ fontSize: '3.5rem', color: 'var(--color-secondary)', marginBottom: '1rem' }}>
             Discover Local Shops
           </h1>

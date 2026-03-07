@@ -1,83 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
-import ProductCard from '../components/ProductCard';
-import VendorCard from '../components/VendorCard';
-import { vendors } from '../data/vendors';
-import { ArrowLeft, ArrowRight, Store } from 'lucide-react';
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    fetch('/api/products')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error('Error fetching products:', err));
-  }, []);
 
   return (
     <div className="animate-fade-in">
       <Hero />
       
-      {/* Featured Local Shops Section */}
-      <section className="container" id="shops" style={{ padding: '4rem 2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <Store size={24} className="text-primary" />
-              <h2 style={{ fontSize: '2.5rem', margin: 0, color: 'var(--color-secondary)' }}>
-                Featured Local Shops
-              </h2>
-            </div>
-            <p style={{ color: 'var(--color-text-muted-light)', fontSize: '1.1rem' }}>
-              Discover the incredible artisans and businesses in your community.
-            </p>
-          </div>
-          
-          <button 
-            className="btn btn-secondary"
-            onClick={() => window.location.href = '/shops'}
-          >
-            View All Shops
-          </button>
-        </div>
-
-        <div className="grid grid-cols-4">
-          {vendors.map(vendor => (
-            <VendorCard key={vendor.id} vendor={vendor} />
-          ))}
-        </div>
-      </section>
-
-      {/* Trending Products Section */}
-      <section className="container" id="discover" style={{ padding: '0 2rem 4rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
-          <div>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--color-secondary)' }}>
-              Trending Local Goods
-            </h2>
-            <p style={{ color: 'var(--color-text-muted-light)', fontSize: '1.1rem' }}>
-              Support local with these popular finds.
-            </p>
-          </div>
-          
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button className="btn-icon" style={{ border: '1px solid var(--color-border-light)' }}>
-              <ArrowLeft size={20} />
-            </button>
-            <button className="btn-icon" style={{ border: '1px solid var(--color-border-light)' }}>
-              <ArrowRight size={20} />
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-4">
-          {products.slice(0, 4).map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
       {/* Sell With Us Banner */}
       <section id="sell" style={{ 
         margin: '2rem 0 4rem',
@@ -116,9 +45,6 @@ export default function Home() {
               onClick={() => window.location.href = '/login'}
             >
               Start Selling
-            </button>
-            <button className="btn glass-dark" style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '1rem 2.5rem', fontSize: '1.1rem' }}>
-              Learn More
             </button>
           </div>
         </div>

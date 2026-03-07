@@ -69,7 +69,6 @@ export default function Navbar({ setIsCartOpen }) {
 
         {/* Desktop Nav */}
         <div style={{ display: 'flex', gap: '2rem', fontWeight: 500, alignItems: 'center' }} className="desktop-nav">
-          <a href="#shops" style={{ color: 'var(--color-primary)' }}>Local Shops</a>
           <a href="/shops">Discover Shops</a>
           <a href="#sell" className="badge" style={{ 
             backgroundColor: 'var(--color-bg-light)', 

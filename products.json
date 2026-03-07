@@ -68,5 +68,15 @@
     "category": "Outerwear",
     "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
     "isNew": true
+  },
+  {
+    "id": 1772910998,
+    "vendorId": "google-oauth2|108102284870345846928",
+    "vendorName": "Da goon Store",
+    "name": "bag",
+    "price": 2.0,
+    "category": "Outerwear",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
+    "isNew": true
   }
 ]

@@ -61,7 +61,11 @@ export default function Hero() {
           Shop unique, handcrafted goods directly from Canadian local businesses and artisans. Quality you can trust, from your community.
         </p>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>
+          <button 
+            className="btn btn-primary" 
+            style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}
+            onClick={() => window.location.href = '/shops'}
+          >
             Shop Local <ArrowRight size={20} />
           </button>
           <button 
