@@ -1,4 +1,7 @@
 
+SET FOREIGN_KEY_CHECKS = 0;
+
+
 CREATE TABLE businesses (
     id     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     auth0_user_id  VARCHAR(255) NOT NULL UNIQUE,  
@@ -39,7 +42,6 @@ CREATE TABLE products (
     description  TEXT NULL,
     price     DECIMAL(10,2) NOT NULL,
     stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
-    
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
@@ -89,3 +91,68 @@ CREATE TABLE orders (
     INDEX idx_customer_session (customer_session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+
+
+CREATE TABLE order_items (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    order_id     INT UNSIGNED NOT NULL,
+    product_id     INT UNSIGNED NOT NULL,
+    
+    quantity      INT UNSIGNED NOT NULL,
+    unit_price     DECIMAL(10,2) NOT NULL,
+    
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    INDEX idx_order (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+CREATE TABLE stock_reservations (
+    id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    product_id    INT UNSIGNED NOT NULL,
+    order_id       INT UNSIGNED NOT NULL,
+    quantity     INT UNSIGNED NOT NULL,
+    expires_at   TIMESTAMP NOT NULL,           
+    
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    INDEX idx_product (product_id),
+    INDEX idx_order (order_id),
+    INDEX idx_expires (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE earnings_history (
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    business_id      INT UNSIGNED NOT NULL,
+    order_id         INT UNSIGNED NOT NULL,
+    
+    order_total       DECIMAL(10,2) NOT NULL,
+    platform_commission DECIMAL(10,2) NOT NULL,
+    business_earnings  DECIMAL(10,2) NOT NULL,
+    
+    month_year    DATE NOT NULL,      
+    
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    INDEX idx_business_month (business_id, month_year),
+    INDEX idx_month (month_year)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE verification_sequence (
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    last_number     INT UNSIGNED NOT NULL DEFAULT 0,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT INTO verification_sequence (last_number) VALUES (0);
+
+SET FOREIGN_KEY_CHECKS = 1;
