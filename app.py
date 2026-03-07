@@ -1,10 +1,20 @@
 from flask import Flask, redirect, request, jsonify
 from auth import make_auth0
+from chatbot import ask_chatbot
 import json
 import os
 import time
 
 app = Flask(__name__)
+
+# Add this route
+@app.route("/api/chat", methods=["POST"])
+async def chat():
+    data = request.json
+    user_message = data.get("message", "")
+    history = data.get("history", [])
+    reply = await ask_chatbot(user_message, history)
+    return jsonify({"reply": reply})
 
 @app.route("/login")
 async def login():
