@@ -1,42 +1,34 @@
 from flask import Flask, redirect, request, jsonify
-from auth import auth0
-import asyncio
+from auth import make_auth0
 import json
 import os
 import time
 
 app = Flask(__name__)
 
-# Helper to run async Auth0 calls in Flask (which is sync by default)
-# Note: With flask[async], we can use async def directly on routes.
-def run_async(coro):
-    return asyncio.run(coro)
-
 @app.route("/login")
 async def login():
-    redirect_url = await auth0.start_interactive_login()
+    redirect_url = await make_auth0().start_interactive_login()
     return redirect(redirect_url)
 
 @app.route("/callback")
 async def callback():
-    await auth0.complete_interactive_login(request.url)
+    await make_auth0().complete_interactive_login(request.url)
     return redirect("http://localhost:5173/")
 
 @app.route("/logout")
 async def logout():
     from auth0_server_python.auth_types import LogoutOptions
     options = LogoutOptions(return_to="http://localhost:5173/")
-    logout_url = await auth0.logout(options)
+    logout_url = await make_auth0().logout(options)
     return redirect(logout_url)
 
 @app.route("/profile")
 async def profile():
-    session = await auth0.get_session()
+    session = await make_auth0().get_session()
     if not session:
         return jsonify({"error": "Unauthorized"}), 401
     return jsonify(session['user'])
-
-# --- User Profile API ---
 
 USERS_FILE = "users.json"
 
@@ -52,13 +44,11 @@ def save_users(users):
 
 @app.route("/api/user/profile", methods=["GET", "POST"])
 async def user_profile():
-    session = await auth0.get_session()
+    session = await make_auth0().get_session()
     if not session:
         return jsonify({"error": "Unauthorized"}), 401
-    
     user_id = session['user']['sub']
     users = load_users()
-
     if request.method == "POST":
         data = request.json
         if user_id not in users:
@@ -71,8 +61,7 @@ async def user_profile():
             users[user_id]["city"] = data.get("city")
         save_users(users)
         return jsonify(users[user_id])
-
-    return jsonify(users.get(user_id, {"storeName": None, "logoUrl": None, "city": None}))
+    return jsonify(users.get(user_id, {"storeName": None, "logoUrl": None}))
 
 @app.route("/api/shops")
 async def get_shops():
@@ -87,22 +76,6 @@ async def get_shops():
                 "city": profile.get("city")
             })
     return jsonify(shops)
-
-@app.route("/api/shops/<vendor_id>")
-async def get_shop_profile(vendor_id):
-    users = load_users()
-    if vendor_id not in users:
-        return jsonify({"error": "Shop not found"}), 404
-    
-    profile = users[vendor_id]
-    return jsonify({
-        "vendorId": vendor_id,
-        "storeName": profile.get("storeName"),
-        "logoUrl": profile.get("logoUrl"),
-        "city": profile.get("city")
-    })
-
-# --- Product API ---
 
 PRODUCTS_FILE = "products.json"
 
@@ -120,8 +93,6 @@ def save_products(products):
 def get_products():
     products = load_products()
     users = load_users()
-    
-    # Enrich products with custom store names and logos
     for product in products:
         vendor_id = product.get('vendorId')
         if vendor_id and vendor_id in users:
@@ -129,41 +100,28 @@ def get_products():
                 product['vendorName'] = users[vendor_id]['storeName']
             if users[vendor_id].get('logoUrl'):
                 product['vendorLogo'] = users[vendor_id]['logoUrl']
-
-    # Filter by vendor if requested
-    vendor_id_filter = request.args.get('vendorId')
-    if vendor_id_filter:
-        products = [p for p in products if p.get('vendorId') == vendor_id_filter]
-            
     return jsonify(products)
 
 @app.route("/api/user/products")
 async def get_user_products():
-    session = await auth0.get_session()
+    session = await make_auth0().get_session()
     if not session:
         return jsonify({"error": "Unauthorized"}), 401
-    
     user_id = session['user']['sub']
     products = load_products()
-    user_products = [p for p in products if p.get('vendorId') == user_id]
-    return jsonify(user_products)
+    return jsonify([p for p in products if p.get('vendorId') == user_id])
 
 @app.route("/api/products", methods=["POST"])
 async def add_product():
-    session = await auth0.get_session()
+    session = await make_auth0().get_session()
     if not session:
         return jsonify({"error": "Unauthorized"}), 401
-    
     user = session['user']
     data = request.json
-    
     products = load_products()
     users = load_users()
-    
-    # Get custom store name if available
     user_profile = users.get(user['sub'], {})
     store_name = user_profile.get('storeName') or user.get('name') or user.get('nickname') or user.get('email')
-
     new_product = {
         "id": int(time.time()),
         "vendorId": user['sub'],
@@ -174,49 +132,38 @@ async def add_product():
         "image": data.get('image') or "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
         "isNew": True
     }
-    
     products.append(new_product)
     save_products(products)
     return jsonify(new_product), 201
 
 @app.route("/api/products/<int:id>", methods=["DELETE"])
-def delete_product(id):
-    session = run_async(auth0.get_session())
+async def delete_product(id):
+    session = await make_auth0().get_session()
     if not session:
         return jsonify({"error": "Unauthorized"}), 401
-    
     user_id = session['user']['sub']
     products = load_products()
-    
     product = next((p for p in products if p['id'] == id), None)
     if not product:
         return jsonify({"error": "Product not found"}), 404
-    
     if product.get('vendorId') != user_id:
         return jsonify({"error": "Forbidden"}), 403
-    
-    products = [p for p in products if p['id'] != id]
-    save_products(products)
+    save_products([p for p in products if p['id'] != id])
     return jsonify({"success": True})
 
 @app.route("/api/products/<int:id>", methods=["PATCH"])
 async def update_product(id):
-    session = await auth0.get_session()
+    session = await make_auth0().get_session()
     if not session:
         return jsonify({"error": "Unauthorized"}), 401
-    
     user_id = session['user']['sub']
     data = request.json
     products = load_products()
-    
     product = next((p for p in products if p['id'] == id), None)
     if not product:
         return jsonify({"error": "Product not found"}), 404
-    
     if product.get('vendorId') != user_id:
         return jsonify({"error": "Forbidden"}), 403
-    
-    # Update fields
     if "price" in data:
         product["price"] = float(data["price"])
     if "name" in data:
@@ -225,7 +172,6 @@ async def update_product(id):
         product["category"] = data["category"]
     if "image" in data:
         product["image"] = data["image"]
-        
     save_products(products)
     return jsonify(product)
 
