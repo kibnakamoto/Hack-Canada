@@ -5,7 +5,7 @@ export const vendors = [
     description: "Handcrafted rustic furniture and home goods made from reclaimed Ontario lumber.",
     location: "Toronto, ON",
     established: 2018,
-    avatar: "https://images.unsplash.com/photo-1542034456-681b4d79b9ba?w=400&h=400&fit=crop",
+    avatar: "https://images.unsplash.com/photo-1545042746-ec93d489bf71?w=400&h=400&fit=crop",
     categories: ["Home", "Furniture"],
     rating: 4.9
   },
@@ -15,7 +15,7 @@ export const vendors = [
     description: "Premium, tested outdoor apparel built to withstand the harshest BC winters.",
     location: "Vancouver, BC",
     established: 2015,
-    avatar: "https://images.unsplash.com/photo-1551468652-e56598cba9a1?w=400&h=400&fit=crop",
+    avatar: "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=400&h=400&fit=crop",
     categories: ["Outdoor", "Apparel"],
     rating: 4.8
   },

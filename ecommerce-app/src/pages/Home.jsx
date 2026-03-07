@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import VendorCard from '../components/VendorCard';
-import { products } from '../data/products';
 import { vendors } from '../data/vendors';
 import { ArrowLeft, ArrowRight, Store } from 'lucide-react';
 
 export default function Home() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(err => console.error('Error fetching products:', err));
+  }, []);
+
   return (
     <div className="animate-fade-in">
       <Hero />
@@ -26,7 +34,10 @@ export default function Home() {
             </p>
           </div>
           
-          <button className="btn btn-secondary">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => window.location.href = '/shops'}
+          >
             View All Shops
           </button>
         </div>
@@ -99,7 +110,11 @@ export default function Home() {
             Set up your shop in minutes.
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem' }}>
+            <button 
+              className="btn btn-primary" 
+              style={{ padding: '1rem 2.5rem', fontSize: '1.1rem' }}
+              onClick={() => window.location.href = '/login'}
+            >
               Start Selling
             </button>
             <button className="btn glass-dark" style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '1rem 2.5rem', fontSize: '1.1rem' }}>

@@ -5,6 +5,8 @@ import { useCart } from '../context/CartContext';
 export default function Navbar({ setIsCartOpen }) {
   const { cartCount } = useCart();
   const [user, setUser] = useState(null);
+  const [storeName, setStoreName] = useState(null);
+  const [logoUrl, setLogoUrl] = useState(null);
 
   useEffect(() => {
     fetch('/profile')
@@ -14,6 +16,16 @@ export default function Navbar({ setIsCartOpen }) {
       })
       .then(data => setUser(data))
       .catch(() => setUser(null));
+
+    fetch('/api/user/profile')
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          if (data.storeName) setStoreName(data.storeName);
+          if (data.logoUrl) setLogoUrl(data.logoUrl);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const handleLogin = () => {
@@ -58,7 +70,7 @@ export default function Navbar({ setIsCartOpen }) {
         {/* Desktop Nav */}
         <div style={{ display: 'flex', gap: '2rem', fontWeight: 500, alignItems: 'center' }} className="desktop-nav">
           <a href="#shops" style={{ color: 'var(--color-primary)' }}>Local Shops</a>
-          <a href="#discover">Discover Products</a>
+          <a href="/shops">Discover Shops</a>
           <a href="#sell" className="badge" style={{ 
             backgroundColor: 'var(--color-bg-light)', 
             color: 'var(--color-secondary)',
@@ -77,10 +89,22 @@ export default function Navbar({ setIsCartOpen }) {
             <Search size={20} />
           </button>
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--color-primary)', marginRight: '0.5rem' }}>
-                {user.name || user.email || 'Profile'}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div 
+                style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+                onClick={() => window.location.href = '/storefront'}
+              >
+                {logoUrl && (
+                  <img 
+                    src={logoUrl} 
+                    alt="Store Logo" 
+                    style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border-light)' }} 
+                  />
+                )}
+                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-secondary)' }}>
+                  {storeName || (user ? (user.name || user.email || 'Profile') : 'Profile')}
+                </span>
+              </div>
               <button className="btn-icon" onClick={handleLogout} title="Logout">
                 <LogOut size={20} />
               </button>

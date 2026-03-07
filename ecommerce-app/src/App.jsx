@@ -4,6 +4,8 @@ import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Cart from './components/Cart';
 import Home from './pages/Home';
+import Storefront from './pages/Storefront';
+import Shops from './pages/Shops';
 import './index.css';
 
 function App() {
@@ -18,7 +20,8 @@ function App() {
           <main style={{ flex: 1 }}>
             <Routes>
               <Route path="/" element={<Home />} />
-              {/* Future routes could go here */}
+              <Route path="/storefront" element={<Storefront />} />
+              <Route path="/shops" element={<Shops />} />
             </Routes>
           </main>
           

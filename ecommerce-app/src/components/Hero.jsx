@@ -64,7 +64,11 @@ export default function Hero() {
           <button className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>
             Shop Local <ArrowRight size={20} />
           </button>
-          <button className="btn glass-dark" style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}>
+          <button 
+            className="btn glass-dark" 
+            style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+            onClick={() => window.location.href = '/login'}
+          >
             Sell with Us
           </button>
         </div>
