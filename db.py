@@ -1,11 +1,12 @@
 import mysql.connector
 import json
+import os
 
 def get_connection():
     return mysql.connector.connect(
-        host="localhost",
+        host="127.0.0.1",
         user="root",
-        password="YOUR_PASSWORD",
+        password="Ms7701&cnd",
         database="hc_platform"
     )
 
@@ -52,5 +53,29 @@ def get_all_businesses_data(company_name):
         "products": products
     }
 
-# data = get_business_full_data("Lakeshore Bread & Pastry")
-# print(data)
+
+def export_businesses(filename="users.json"):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = "SELECT auth0_user_id, company_name, registered_address FROM businesses"
+    cursor.execute(query)
+
+    rows = cursor.fetchall()
+
+    data = {}
+
+    for row in rows:
+        data[row["auth0_user_id"]] = {
+            "company_name": row["company_name"],
+            "registered_address": row["registered_address"]
+        }
+
+    cursor.close()
+    connection.close()
+
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=2)
+    return data
+
+export_businesses() # 
