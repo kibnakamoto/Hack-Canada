@@ -63,29 +63,38 @@ async def user_profile():
         data = request.json
         if user_id not in users:
             users[user_id] = {}
-        if "storeName" in data:
-            users[user_id]["storeName"] = data.get("storeName")
-        if "logoUrl" in data:
-            users[user_id]["logoUrl"] = data.get("logoUrl")
-        if "city" in data:
-            users[user_id]["city"] = data.get("city")
+        if "company_name" in data:
+            users[user_id]["company_name"] = data.get("company_name")
+        if "registered_address" in data:
+            users[user_id]["registered_address"] = data.get("registered_address")
         save_users(users)
         return jsonify(users[user_id])
-    return jsonify(users.get(user_id, {"storeName": None, "logoUrl": None}))
+    return jsonify(users.get(user_id, {"company_name": None}))
 
 @app.route("/api/shops")
 async def get_shops():
     users = load_users()
     shops = []
     for user_id, profile in users.items():
-        if profile.get("storeName"):
+        if profile.get("company_name"):
             shops.append({
-                "vendorId": user_id,
-                "storeName": profile.get("storeName"),
-                "logoUrl": profile.get("logoUrl"),
-                "city": profile.get("city")
+                "auth0_user_id": user_id,
+                "company_name": profile.get("company_name"),
+                "registered_address": profile.get("registered_address")
             })
     return jsonify(shops)
+
+@app.route("/api/shops/<auth0_user_id>")
+async def get_shop(auth0_user_id):
+    users = load_users()
+    profile = users.get(auth0_user_id, {})
+    if not profile.get("company_name"):
+        return jsonify({"error": "Shop not found"}), 404
+    return jsonify({
+        "auth0_user_id": auth0_user_id,
+        "company_name": profile.get("company_name"),
+        "registered_address": profile.get("registered_address")
+    })
 
 PRODUCTS_FILE = "products.json"
 
@@ -103,13 +112,14 @@ def save_products(products):
 def get_products():
     products = load_products()
     users = load_users()
+    auth0_user_id_filter = request.args.get("auth0_user_id")
+    if auth0_user_id_filter:
+        products = [p for p in products if p.get("auth0_user_id") == auth0_user_id_filter]
     for product in products:
-        vendor_id = product.get('vendorId')
-        if vendor_id and vendor_id in users:
-            if users[vendor_id].get('storeName'):
-                product['vendorName'] = users[vendor_id]['storeName']
-            if users[vendor_id].get('logoUrl'):
-                product['vendorLogo'] = users[vendor_id]['logoUrl']
+        auth0_user_id = product.get('auth0_user_id')
+        if auth0_user_id and auth0_user_id in users:
+            if users[auth0_user_id].get('company_name'):
+                product['company_name'] = users[auth0_user_id]['company_name']
     return jsonify(products)
 
 @app.route("/api/user/products")
@@ -119,7 +129,7 @@ async def get_user_products():
         return jsonify({"error": "Unauthorized"}), 401
     user_id = session['user']['sub']
     products = load_products()
-    return jsonify([p for p in products if p.get('vendorId') == user_id])
+    return jsonify([p for p in products if p.get('auth0_user_id') == user_id])
 
 @app.route("/api/products", methods=["POST"])
 async def add_product():
@@ -131,16 +141,18 @@ async def add_product():
     products = load_products()
     users = load_users()
     user_profile = users.get(user['sub'], {})
-    store_name = user_profile.get('storeName') or user.get('name') or user.get('nickname') or user.get('email')
+    company_name = user_profile.get('company_name') or user.get('name') or user.get('nickname') or user.get('email')
     new_product = {
         "id": int(time.time()),
-        "vendorId": user['sub'],
-        "vendorName": store_name,
+        "auth0_user_id": user['sub'],
+        "company_name": company_name,
         "name": data.get('name'),
         "price": float(data.get('price')),
+        "description": data.get('description'),
+        "stock_quantity": int(data.get('stock_quantity', 0)),
         "category": data.get('category'),
         "image": data.get('image') or "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
-        "isNew": True
+        "is_new": True
     }
     products.append(new_product)
     save_products(products)
@@ -156,7 +168,7 @@ async def delete_product(id):
     product = next((p for p in products if p['id'] == id), None)
     if not product:
         return jsonify({"error": "Product not found"}), 404
-    if product.get('vendorId') != user_id:
+    if product.get('auth0_user_id') != user_id:
         return jsonify({"error": "Forbidden"}), 403
     save_products([p for p in products if p['id'] != id])
     return jsonify({"success": True})
@@ -172,12 +184,16 @@ async def update_product(id):
     product = next((p for p in products if p['id'] == id), None)
     if not product:
         return jsonify({"error": "Product not found"}), 404
-    if product.get('vendorId') != user_id:
+    if product.get('auth0_user_id') != user_id:
         return jsonify({"error": "Forbidden"}), 403
     if "price" in data:
         product["price"] = float(data["price"])
     if "name" in data:
         product["name"] = data["name"]
+    if "description" in data:
+        product["description"] = data["description"]
+    if "stock_quantity" in data:
+        product["stock_quantity"] = int(data["stock_quantity"])
     if "category" in data:
         product["category"] = data["category"]
     if "image" in data:

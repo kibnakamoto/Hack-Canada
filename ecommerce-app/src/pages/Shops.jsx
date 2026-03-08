@@ -62,8 +62,8 @@ export default function Shops() {
                 style={{ width: '200px', height: '50px', backgroundColor: 'white' }}
               >
                 <option value="All">All Cities</option>
-                {Array.from(new Set(shops.map(s => s.city).filter(Boolean))).sort().map(city => (
-                  <option key={city} value={city}>{city}</option>
+                {Array.from(new Set(shops.map(s => s.registered_address).filter(Boolean))).sort().map(addr => (
+                  <option key={addr} value={addr}>{addr}</option>
                 ))}
               </select>
             </div>
@@ -81,12 +81,12 @@ export default function Shops() {
           <div className="grid grid-cols-4" style={{ gap: '2rem' }}>
             {shops
               .filter(shop => {
-                const matchesCity = filterCity === 'All' || shop.city === filterCity;
-                const matchesSearch = shop.storeName?.toLowerCase().includes(shopSearchTerm.toLowerCase());
+                const matchesCity = filterCity === 'All' || shop.registered_address === filterCity;
+                const matchesSearch = shop.company_name?.toLowerCase().includes(shopSearchTerm.toLowerCase());
                 return matchesCity && matchesSearch;
               })
               .map(shop => (
-              <div key={shop.vendorId} className="glass shop-card" style={{ 
+              <div key={shop.auth0_user_id} className="glass shop-card" style={{ 
                 padding: '2rem', 
                 borderRadius: '24px',
                 textAlign: 'center',
@@ -98,14 +98,7 @@ export default function Shops() {
                 cursor: 'pointer'
               }}>
                 <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-                  {shop.logoUrl ? (
-                    <img 
-                      src={shop.logoUrl} 
-                      alt={shop.storeName} 
-                      style={{ width: '100px', height: '100px', borderRadius: '24px', objectFit: 'cover', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }} 
-                    />
-                  ) : (
-                    <div style={{ 
+                  <div style={{ 
                       width: '100px', 
                       height: '100px', 
                       borderRadius: '24px', 
@@ -118,19 +111,18 @@ export default function Shops() {
                       fontWeight: 'bold',
                       boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
                     }}>
-                      {shop.storeName.charAt(0)}
+                      {shop.company_name.charAt(0)}
                     </div>
-                  )}
                 </div>
 
                 <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--color-secondary)' }}>
-                  {shop.storeName}
+                  {shop.company_name}
                 </h3>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-text-muted-light)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
                   <MapPin size={14} className="text-primary" />
-                  <span style={{ color: shop.city ? 'var(--color-primary)' : 'inherit', fontWeight: shop.city ? 600 : 400 }}>
-                    {shop.city || 'Canada'}
+                  <span style={{ color: shop.registered_address ? 'var(--color-primary)' : 'inherit', fontWeight: shop.registered_address ? 600 : 400 }}>
+                    {shop.registered_address || 'Canada'}
                   </span>
                   <span style={{ margin: '0 0.4rem' }}>•</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
@@ -144,7 +136,7 @@ export default function Shops() {
                   style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.location.href = `/shop/${shop.vendorId}`;
+                    window.location.href = `/shop/${shop.auth0_user_id}`;
                   }}
                 >
                   Visit Store <ArrowRight size={16} />

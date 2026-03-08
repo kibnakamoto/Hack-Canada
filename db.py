@@ -43,8 +43,8 @@ def get_all_businesses_data(company_name):
     connection.close()
     return {
         "business": {
-            "name": business["company_name"],
-            "address": business["registered_address"],
+            "company_name": business["company_name"],
+            "registered_address": business["registered_address"],
             "status": business["status"],
             "start_date": str(business["start_date"])
         },

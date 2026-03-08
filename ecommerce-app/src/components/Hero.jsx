@@ -16,7 +16,7 @@ export default function Hero() {
       alignItems: 'center',
       minHeight: '500px'
     }} className="animate-fade-in shadow-xl">
-      
+
       {/* Decorative Gradients */}
       <div style={{
         position: 'absolute',
@@ -43,33 +43,33 @@ export default function Hero() {
         <div className="badge badge-primary" style={{ marginBottom: '1.5rem' }}>
           Support Local
         </div>
-        <h1 style={{ 
-          fontSize: '4rem', 
-          lineHeight: 1.1, 
+        <h1 style={{
+          fontSize: '4rem',
+          lineHeight: 1.1,
           marginBottom: '1.5rem',
           color: 'white'
         }}>
-          Discover the <br />
-          <span style={{ color: 'var(--color-primary-light)' }}>True North</span>.
+          Prioritizing <br />
+          <span style={{ color: 'var(--color-primary-light)' }}>Canadians</span> since 2026.
         </h1>
-        <p style={{ 
-          fontSize: '1.2rem', 
-          color: 'var(--color-text-muted-dark)', 
+        <p style={{
+          fontSize: '1.2rem',
+          color: 'var(--color-text-muted-dark)',
           marginBottom: '2.5rem',
           maxWidth: '480px'
         }}>
           Shop unique, handcrafted goods directly from Canadian local businesses and artisans. Quality you can trust, from your community.
         </p>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button 
-            className="btn btn-primary" 
+          <button
+            className="btn btn-primary"
             style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}
             onClick={() => window.location.href = '/shops'}
           >
             Shop Local <ArrowRight size={20} />
           </button>
-          <button 
-            className="btn glass-dark" 
+          <button
+            className="btn glass-dark"
             style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
             onClick={() => window.location.href = '/login'}
           >
@@ -77,7 +77,7 @@ export default function Hero() {
           </button>
         </div>
       </div>
-      
+
     </div>
   );
 }

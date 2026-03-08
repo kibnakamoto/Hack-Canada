@@ -5,9 +5,8 @@ export default function Storefront() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [storeName, setStoreName] = useState('');
-  const [logoUrl, setLogoUrl] = useState('');
-  const [city, setCity] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [registeredAddress, setRegisteredAddress] = useState('');
   const [isEditingName, setIsEditingName] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -43,9 +42,8 @@ export default function Storefront() {
     fetch('/api/user/profile')
       .then(res => res.json())
       .then(data => {
-        if (data.storeName) setStoreName(data.storeName);
-        if (data.logoUrl) setLogoUrl(data.logoUrl);
-        if (data.city) setCity(data.city);
+        if (data.company_name) setCompanyName(data.company_name);
+        if (data.registered_address) setRegisteredAddress(data.registered_address);
       });
   };
 
@@ -54,7 +52,7 @@ export default function Storefront() {
     fetch('/api/user/profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ storeName, logoUrl, city })
+      body: JSON.stringify({ company_name: companyName, registered_address: registeredAddress })
     })
     .then(res => res.json())
     .then(() => setIsEditingName(false));
@@ -133,18 +131,18 @@ export default function Storefront() {
                     <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', fontWeight: 500 }}>Store Name</label>
                     <input 
                       className="input" 
-                      value={storeName}
-                      onChange={e => setStoreName(e.target.value)}
+                      value={companyName}
+                      onChange={e => setCompanyName(e.target.value)}
                       placeholder="Enter Store Name"
                       style={{ width: '100%' }}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', fontWeight: 500 }}>City</label>
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', fontWeight: 500 }}>Address</label>
                     <input 
                       className="input" 
-                      value={city}
-                      onChange={e => setCity(e.target.value)}
+                      value={registeredAddress}
+                      onChange={e => setRegisteredAddress(e.target.value)}
                       placeholder="e.g. Toronto, ON"
                       style={{ width: '100%' }}
                     />
@@ -156,23 +154,9 @@ export default function Storefront() {
                 </form>
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                  {logoUrl && (
-                    <img 
-                      src={logoUrl} 
-                      alt="Store Logo" 
-                      style={{ 
-                        width: '80px', 
-                        height: '80px', 
-                        borderRadius: '16px', 
-                        objectFit: 'cover', 
-                        border: '2px solid white',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
-                      }} 
-                    />
-                  )}
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <h1 style={{ fontSize: '2.5rem', color: 'var(--color-secondary)', margin: 0 }}>{storeName || 'My Storefront'}</h1>
+                      <h1 style={{ fontSize: '2.5rem', color: 'var(--color-secondary)', margin: 0 }}>{companyName || 'My Storefront'}</h1>
                       <button 
                         onClick={() => setIsEditingName(true)}
                         style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontSize: '0.9rem', textDecoration: 'underline' }}
@@ -180,9 +164,9 @@ export default function Storefront() {
                         Edit Profile
                       </button>
                     </div>
-                    {city && (
+                    {registeredAddress && (
                       <p style={{ color: 'var(--color-primary)', fontSize: '1rem', fontWeight: 600, margin: '0.25rem 0 0 0' }}>
-                        📍 {city}
+                        📍 {registeredAddress}
                       </p>
                     )}
                     <p style={{ color: 'var(--color-text-muted-light)', fontSize: '1.1rem', marginTop: '0.5rem', marginBottom: 0 }}>Manage your local listings and grow your business.</p>
@@ -332,7 +316,7 @@ export default function Storefront() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
                     <span className="badge" style={{ fontSize: '0.75rem' }}>{product.category}</span>
-                    {product.isNew && <span className="badge" style={{ backgroundColor: 'var(--color-success)', color: 'white', border: 'none' }}>Active</span>}
+                    {(product.is_new ?? product.isNew) && <span className="badge" style={{ backgroundColor: 'var(--color-success)', color: 'white', border: 'none' }}>Active</span>}
                   </div>
                   <h3 style={{ fontSize: '1.4rem', color: 'var(--color-secondary)', marginBottom: '0.25rem' }}>{product.name}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

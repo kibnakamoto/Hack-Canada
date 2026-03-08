@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
 
 export default function ShopView() {
-  const { vendorId } = useParams();
+  const { auth0_user_id } = useParams();
   const [vendor, setVendor] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,13 +16,13 @@ export default function ShopView() {
       try {
         setLoading(true);
         // Fetch public profile
-        const profileRes = await fetch(`/api/shops/${vendorId}`);
+        const profileRes = await fetch(`/api/shops/${auth0_user_id}`);
         if (!profileRes.ok) throw new Error('Shop not found');
         const profileData = await profileRes.json();
         setVendor(profileData);
 
         // Fetch vendor products
-        const productsRes = await fetch(`/api/products?vendorId=${vendorId}`);
+        const productsRes = await fetch(`/api/products?auth0_user_id=${auth0_user_id}`);
         const productsData = await productsRes.json();
         setProducts(productsData);
       } catch (err) {
@@ -33,7 +33,7 @@ export default function ShopView() {
     };
 
     fetchShopData();
-  }, [vendorId]);
+  }, [auth0_user_id]);
 
   if (loading) {
     return (
@@ -75,21 +75,7 @@ export default function ShopView() {
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
-            {vendor.logoUrl ? (
-              <img 
-                src={vendor.logoUrl} 
-                alt={vendor.storeName} 
-                style={{ 
-                  width: '120px', 
-                  height: '120px', 
-                  borderRadius: '24px', 
-                  objectFit: 'cover', 
-                  boxShadow: '0 12px 24px rgba(0,0,0,0.1)',
-                  border: '2px solid white'
-                }} 
-              />
-            ) : (
-              <div style={{ 
+            <div style={{ 
                 width: '120px', 
                 height: '120px', 
                 borderRadius: '24px', 
@@ -102,18 +88,17 @@ export default function ShopView() {
                 fontWeight: 'bold',
                 boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
               }}>
-                {vendor.storeName.charAt(0)}
-              </div>
-            )}
+              {vendor.company_name.charAt(0)}
+            </div>
             
             <div>
               <h1 style={{ fontSize: '3.5rem', color: 'var(--color-secondary)', margin: 0, lineHeight: 1 }}>
-                {vendor.storeName}
+                {vendor.company_name}
               </h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-primary)', fontWeight: 600 }}>
                   <MapPin size={18} />
-                  {vendor.city || 'Canada'}
+                  {vendor.registered_address || 'Canada'}
                 </span>
                 <span style={{ color: 'var(--color-text-muted-light)' }}>•</span>
                 <span style={{ color: 'var(--color-text-muted-light)' }}>

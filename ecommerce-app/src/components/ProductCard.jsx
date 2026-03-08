@@ -23,7 +23,7 @@ export default function ProductCard({ product }) {
         overflow: 'hidden',
         padding: '2rem'
       }}>
-        {product.isNew && (
+        {(product.is_new ?? product.isNew) && (
           <div className="badge badge-primary" style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 10 }}>
             New
           </div>
@@ -70,7 +70,7 @@ export default function ProductCard({ product }) {
           {product.category}
         </div>
         <div style={{ fontSize: '0.9rem', color: 'var(--color-primary)', fontWeight: 500, marginBottom: '0.5rem' }}>
-          By {product.vendorName}
+          By {product.company_name ?? product.vendorName}
         </div>
         <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--color-secondary)' }}>
           {product.name}

@@ -1,7 +1,6 @@
 {
   "google-oauth2|108102284870345846928": {
-    "storeName": "Da goon Store",
-    "logoUrl": "",
-    "city": "Brampton Ontario"
+    "company_name": "Da goon Store",
+    "registered_address": "Brampton Ontario"
   }
 }

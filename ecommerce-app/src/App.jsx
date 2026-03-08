@@ -23,7 +23,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/storefront" element={<Storefront />} />
               <Route path="/shops" element={<Shops />} />
-              <Route path="/shop/:vendorId" element={<ShopView />} />
+              <Route path="/shop/:auth0_user_id" element={<ShopView />} />
             </Routes>
           </main>
           

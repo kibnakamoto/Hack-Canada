@@ -30,14 +30,14 @@ export default function VendorCard({ vendor }) {
           gap: '0.25rem'
         }}>
           <MapPin size={16} />
-          <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>{vendor.location}</span>
+          <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>{vendor.registered_address ?? vendor.location}</span>
         </div>
       </div>
       
       <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
           <h3 style={{ fontSize: '1.25rem', color: 'var(--color-secondary)', margin: 0 }}>
-            {vendor.name}
+            {vendor.company_name ?? vendor.name}
           </h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)' }}>
             <Star size={16} fill="currentColor" />

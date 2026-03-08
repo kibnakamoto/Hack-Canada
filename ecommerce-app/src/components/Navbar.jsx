@@ -5,8 +5,7 @@ import { useCart } from '../context/CartContext';
 export default function Navbar({ setIsCartOpen }) {
   const { cartCount } = useCart();
   const [user, setUser] = useState(null);
-  const [storeName, setStoreName] = useState(null);
-  const [logoUrl, setLogoUrl] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
 
   useEffect(() => {
     fetch('/profile')
@@ -21,11 +20,10 @@ export default function Navbar({ setIsCartOpen }) {
       .then(res => res.json())
       .then(data => {
         if (data) {
-          if (data.storeName) setStoreName(data.storeName);
-          if (data.logoUrl) setLogoUrl(data.logoUrl);
+          if (data.company_name) setCompanyName(data.company_name);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const handleLogin = () => {
@@ -39,18 +37,18 @@ export default function Navbar({ setIsCartOpen }) {
   return (
     <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 100, padding: '1rem 0' }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        
+
         {/* Mobile Menu & Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button className="btn-icon" style={{ display: 'none' /* hidden on desktop, placeholder */}}>
+          <button className="btn-icon" style={{ display: 'none' /* hidden on desktop, placeholder */ }}>
             <Menu size={24} />
           </button>
-          
+
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              backgroundColor: 'var(--color-primary)', 
+            <div style={{
+              width: '40px',
+              height: '40px',
+              backgroundColor: 'var(--color-primary)',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
@@ -59,10 +57,10 @@ export default function Navbar({ setIsCartOpen }) {
               fontWeight: 'bold',
               fontSize: '1.2rem'
             }}>
-              TN
+              CL
             </div>
             <span style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--color-secondary)' }}>
-              TrueNorth
+              CanaLocal
             </span>
           </a>
         </div>
@@ -70,8 +68,8 @@ export default function Navbar({ setIsCartOpen }) {
         {/* Desktop Nav */}
         <div style={{ display: 'flex', gap: '2rem', fontWeight: 500, alignItems: 'center' }} className="desktop-nav">
           <a href="/shops">Discover Shops</a>
-          <a href="#sell" className="badge" style={{ 
-            backgroundColor: 'var(--color-bg-light)', 
+          <a href="#sell" className="badge" style={{
+            backgroundColor: 'var(--color-bg-light)',
             color: 'var(--color-secondary)',
             padding: '0.5rem 1rem',
             border: '1px solid var(--color-border-light)',
@@ -89,19 +87,12 @@ export default function Navbar({ setIsCartOpen }) {
           </button>
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div 
+              <div
                 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
                 onClick={() => window.location.href = '/storefront'}
               >
-                {logoUrl && (
-                  <img 
-                    src={logoUrl} 
-                    alt="Store Logo" 
-                    style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border-light)' }} 
-                  />
-                )}
                 <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-secondary)' }}>
-                  {storeName || (user ? (user.name || user.email || 'Profile') : 'Profile')}
+                  {companyName || (user ? (user.name || user.email || 'Profile') : 'Profile')}
                 </span>
               </div>
               <button className="btn-icon" onClick={handleLogout} title="Logout">
