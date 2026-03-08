@@ -1,6 +1,10 @@
 {
-  "google-oauth2|108102284870345846928": {
-    "company_name": "Da goon Store",
-    "registered_address": "Brampton Ontario"
+  "auth0|69ac6ff7f25c2bcbc54cf8f9": {
+    "company_name": "Lakeshore Bread & Pastry",
+    "registered_address": "124 Queen Street West, Toronto, ON M5V 1A8"
+  },
+  "auth0|fictional-hardware-002": {
+    "company_name": "Wellington Hardware & Garden",
+    "registered_address": "312 Princess Street, Kingston, ON K7L 1B5"
   }
 }

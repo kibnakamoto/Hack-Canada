@@ -53,7 +53,7 @@ INSERT INTO businesses (
     '2015-08-01',
     '["hardware", "garden supplies", "tools", "paint", "seeds"]',
     FALSE,
-    5.00   
+    5.00  
 );
 
 INSERT INTO products (business_id, name, description, price, stock_quantity) VALUES
