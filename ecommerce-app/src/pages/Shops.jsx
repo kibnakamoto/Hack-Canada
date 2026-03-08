@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Store, ArrowRight, Loader2, MapPin, Star, Search } from 'lucide-react';
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function Shops() {
   const [shops, setShops] = useState([]);
@@ -43,9 +44,9 @@ export default function Shops() {
             {/* Shop Name Search */}
             <div style={{ position: 'relative', width: '350px' }}>
               <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-primary)', opacity: 0.6 }} />
-              <input 
-                className="input" 
-                placeholder="Search shops by name (e.g. 'Da goon')..." 
+              <input
+                className="input"
+                placeholder="Search shops by name (e.g. 'Cafe')..."
                 value={shopSearchTerm}
                 onChange={e => setShopSearchTerm(e.target.value)}
                 style={{ paddingLeft: '3rem', width: '100%', height: '50px', backgroundColor: 'white' }}
@@ -55,8 +56,8 @@ export default function Shops() {
             {/* City Filter */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>Filter by City:</span>
-              <select 
-                className="input" 
+              <select
+                className="input"
                 value={filterCity}
                 onChange={e => setFilterCity(e.target.value)}
                 style={{ width: '200px', height: '50px', backgroundColor: 'white' }}
@@ -86,63 +87,74 @@ export default function Shops() {
                 return matchesCity && matchesSearch;
               })
               .map(shop => (
-              <div key={shop.auth0_user_id} className="glass shop-card" style={{ 
-                padding: '2rem', 
-                borderRadius: '24px',
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
-                border: '1px solid var(--color-border-light)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                cursor: 'pointer'
-              }}>
-                <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-                  <div style={{ 
-                      width: '100px', 
-                      height: '100px', 
-                      borderRadius: '24px', 
-                      backgroundColor: 'var(--color-bg-light)', 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                <div key={shop.auth0_user_id} className="glass shop-card" style={{
+                  padding: '2rem',
+                  borderRadius: '24px',
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease',
+                  border: '1px solid var(--color-border-light)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  cursor: 'pointer'
+                }}>
+                  <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
+                    {/* <div style={{
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '24px',
+                      backgroundColor: 'var(--color-bg-light)',
+                      display: 'flex',
+                      alignItems: 'center',
                       justifyContent: 'center',
                       color: 'var(--color-primary)',
                       fontSize: '2rem',
                       fontWeight: 'bold',
                       boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
                     }}>
-                      {shop.company_name.charAt(0)}
+                      {shop.company_name.charAt(1)}
+                    </div> */}
+                    <div style={{
+                      padding: '10px',
+                      backgroundColor: 'white',
+                      borderRadius: '16px',
+                      boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
+                    }}>
+                      <QRCodeCanvas
+                        value="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        size={120}
+                      />
                     </div>
-                </div>
-
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--color-secondary)' }}>
-                  {shop.company_name}
-                </h3>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-text-muted-light)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                  <MapPin size={14} className="text-primary" />
-                  <span style={{ color: shop.registered_address ? 'var(--color-primary)' : 'inherit', fontWeight: shop.registered_address ? 600 : 400 }}>
-                    {shop.registered_address || 'Canada'}
-                  </span>
-                  <span style={{ margin: '0 0.4rem' }}>•</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                    <Star size={14} fill="#f59e0b" color="#f59e0b" />
-                    <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>4.9</span>
                   </div>
-                </div>
 
-                <button 
-                  className="btn btn-secondary" 
-                  style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.location.href = `/shop/${shop.auth0_user_id}`;
-                  }}
-                >
-                  Visit Store <ArrowRight size={16} />
-                </button>
-              </div>
-            ))}
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--color-secondary)' }}>
+                    {shop.company_name}
+                  </h3>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-text-muted-light)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                    <MapPin size={14} className="text-primary" />
+                    <span style={{ color: shop.registered_address ? 'var(--color-primary)' : 'inherit', fontWeight: shop.registered_address ? 600 : 400 }}>
+                      {shop.registered_address || 'Canada'}
+                    </span>
+                    <span style={{ margin: '0 0.4rem' }}>•</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                      <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                      <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>4.9</span>
+                    </div>
+                  </div>
+
+                  {/* <button
+                    className="btn btn-secondary"
+                    style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.location.href = `/shop/${shop.auth0_user_id}`;
+                    }}
+                  >
+                    Visit Store <ArrowRight size={16} />
+                  </button> */}
+                </div>
+              ))}
           </div>
         )}
       </div>

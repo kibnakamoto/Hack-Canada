@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Store, MapPin, ArrowLeft, Loader2, ShoppingBag } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
+import { QRCodeCanvas } from 'qrcode.react';
 
 export default function ShopView() {
   const { auth0_user_id } = useParams();
@@ -47,9 +48,9 @@ export default function ShopView() {
     return (
       <div className="container" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
         <h2 style={{ fontSize: '2rem', color: 'var(--color-secondary)' }}>Shop not found</h2>
-        <button 
+        <button
           onClick={() => window.location.href = '/shops'}
-          className="btn btn-secondary" 
+          className="btn btn-secondary"
           style={{ marginTop: '1rem' }}
         >
           Back to Directory
@@ -61,13 +62,13 @@ export default function ShopView() {
   return (
     <div className="animate-fade-in">
       {/* Branded Header */}
-      <header style={{ 
-        backgroundColor: 'var(--color-bg-light)', 
+      <header style={{
+        backgroundColor: 'var(--color-bg-light)',
         borderBottom: '1px solid var(--color-border-light)',
         padding: '6rem 2rem 4rem'
       }}>
         <div className="container">
-          <button 
+          <button
             onClick={() => window.location.href = '/shops'}
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--color-text-muted-light)', cursor: 'pointer', marginBottom: '2rem', padding: 0 }}
           >
@@ -75,43 +76,40 @@ export default function ShopView() {
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
-            <div style={{ 
-                width: '120px', 
-                height: '120px', 
-                borderRadius: '24px', 
-                backgroundColor: 'var(--color-primary)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '2.5rem',
-                fontWeight: 'bold',
-                boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
-              }}>
-              {vendor.company_name.charAt(0)}
+            <div style={{
+              padding: '10px',
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
+            }}>
+              <QRCodeCanvas
+                value="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                size={120}
+              />
             </div>
-            
-            <div>
-              <h1 style={{ fontSize: '3.5rem', color: 'var(--color-secondary)', margin: 0, lineHeight: 1 }}>
-                {vendor.company_name}
-              </h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-primary)', fontWeight: 600 }}>
-                  <MapPin size={18} />
-                  {vendor.registered_address || 'Canada'}
-                </span>
-                <span style={{ color: 'var(--color-text-muted-light)' }}>•</span>
-                <span style={{ color: 'var(--color-text-muted-light)' }}>
-                  {products.length} Products
-                </span>
-              </div>
+          </div>
+
+          <div>
+            <h1 style={{ fontSize: '3.5rem', color: 'var(--color-secondary)', margin: 0, lineHeight: 1 }}>
+              {vendor.company_name}
+            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-primary)', fontWeight: 600 }}>
+                <MapPin size={18} />
+                {vendor.registered_address || 'Canada'}
+              </span>
+              <span style={{ color: 'var(--color-text-muted-light)' }}>•</span>
+              <span style={{ color: 'var(--color-text-muted-light)' }}>
+                {products.length} Products
+              </span>
             </div>
           </div>
         </div>
-      </header>
+      </header >
 
       {/* Product Catalog */}
-      <section className="container" style={{ padding: '4rem 2rem' }}>
+      < section className="container" style={{ padding: '4rem 2rem' }
+      }>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem' }}>
           <ShoppingBag size={24} className="text-primary" />
           <h2 style={{ fontSize: '2rem', margin: 0, color: 'var(--color-secondary)' }}>
@@ -119,18 +117,20 @@ export default function ShopView() {
           </h2>
         </div>
 
-        {products.length === 0 ? (
-          <div className="glass" style={{ padding: '4rem', textAlign: 'center', color: 'var(--color-text-muted-light)' }}>
-            <p style={{ fontSize: '1.2rem' }}>This shop hasn't listed any products yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-4">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-      </section>
-    </div>
+        {
+          products.length === 0 ? (
+            <div className="glass" style={{ padding: '4rem', textAlign: 'center', color: 'var(--color-text-muted-light)' }}>
+              <p style={{ fontSize: '1.2rem' }}>This shop hasn't listed any products yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-4">
+              {products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )
+        }
+      </section >
+    </div >
   );
 }
